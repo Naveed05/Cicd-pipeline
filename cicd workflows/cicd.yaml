@@ -1,0 +1,48 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build-test-train:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1 — Checkout code
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # Step 2 — Setup Python
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    # Step 3 — Install dependencies
+    - name: Install dependencies
+      run: |
+        pip install pandas numpy scikit-learn matplotlib seaborn
+
+    # Step 4 — Run Test Script
+    - name: Run Tests
+      run: |
+        python test.py
+
+    # Step 5 — Run Model Training
+    - name: Train Model
+      run: |
+        python train_model.py
+
+    # Step 6 — Upload Outputs as Artifacts
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: model-artifacts
+        path: |
+          test.txt
+          scores.txt
+          ConfusionMatrix.png
+          FeatureImportance.png
